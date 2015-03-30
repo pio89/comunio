@@ -1,11 +1,12 @@
 drop table comunidad cascade;
 create table comunidad(
   id_comunidad              bigserial      constraint pk_comunidad primary key,
-  nombre_comunidad          varchar(30)    not null constraint uq_comunidad_nombre unique
+  nombre_comunidad          varchar(30)    not null constraint                                       uq_comunidad_nombre unique
 
 );
 
 insert into comunidad (nombre_comunidad) values ('papafritas');
+insert into comunidad (nombre_comunidad) values ('el bar de la esquina');
 
 
 drop table usuarios cascade;
@@ -26,19 +27,34 @@ create table usuarios (
 );
 
 insert into usuarios (nombre, nick, email, password, comunidad_id)
-            values('pepe', 'pepe', 'pepe@hotmail.com',md5('pepe'), 1);
+       values('pepe', 'pepe', 'pepe@hotmail.com',md5('pepe'), 1);
+insert into usuarios (nombre, nick, email, password, comunidad_id)
+       values('fede', 'fede', 'fede@hotmail.com',md5('fede'), 2);
 
+drop table if exists comentarios cascade;
 
-
+create table comentarios(
+  id_comentario      bigserial    constraint pk_comentarios primary key,
+  texto_comentario   varchar(500) not null,
+  comunidad_id       bigint       constraint fk_comunidad_id
+                                  references comunidad(id_comunidad) 
+                                  on delete no action
+                                  on update cascade,
+  usuarios_id        bigint       constraint fk_usuarios_id
+                                  references usuarios(id_usuario)
+                                  on delete no action
+                                  on update cascade,
+  fecha             timestamp     not null default current_timestamp
+);
 
 
 drop table if exists validaciones_pendientes cascade;
 
 create table validaciones_pendientes(
   usuarios_id bigint      constraint fk_usuarios
-                            references usuarios(id_usuario)
-                            on delete cascade
-                            on update cascade,
+                          references usuarios(id_usuario)
+                          on delete cascade
+                          on update cascade,
   token       char(32)    constraint pk_validaciones_pendientes primary key
 );
 

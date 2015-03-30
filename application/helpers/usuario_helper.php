@@ -10,7 +10,13 @@ function login_logout()
         $nick = $CI->session->userdata('nick');
 
       
-        ?><span><?= $nick ?></span>   <button><?=anchor('/usuarios/logout', 'Log Out')?></button><?php
+        ?><div>
+        <label>Nombre de usuario:</label>
+         <span><?= $nick ?></span><br/>
+        </div>
+        <div>
+          <button class="btn btn-info"><?=anchor('/usuarios/logout', 'Log Out')?></button>
+        </div><?php
         
         else:
 

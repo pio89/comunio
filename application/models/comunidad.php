@@ -13,22 +13,29 @@ class Comunidad extends CI_Model
         return ($res->num_rows() > 0) ? $res->row()->nombre_comunidad : FALSE;
     }
 
-    public function sw_search($keyword)
-     {
-        $this->db->select('nombre_comunidad');
-        $this->db->from('comunidad');
+    public function mostrar_comunidades()
+    {
+    	$res = $this->db->query("select id_comunidad, nombre_comunidad, count(comunidad_id) as n_judadores from usuarios u, comunidad c where u.comunidad_id = c.id_comunidad group by id_comunidad;");
+  
+                                      
+        return ($res->num_rows() > 0) ? $res->result_array() : FALSE;
+    }
 
-       $this->db->like('nombre_comunidad', $keyword);
-        $this->db->order_by("nombre_comunidad", "asc");
-        
-         $query = $this->db->get();
-        foreach($query->result_array() as $row){
-            //$data[$row['friendly_name']];
-             $data[] = $row;
-         }
-         //return $data;
-         return $query;
-     }
+    public function insertar_usuario_a_comunidad($id_comunidad, $nick)
+    {
+       $res = $this->db->query("update usuarios
+                                 set comunidad_id = ?
+                                 where nick = ?",
+                                 array($id_comunidad, $nick));
+    }
+
+    public function comunidad_por_id_usuario($id_usuario)
+    {
+        $res = $this->db->query("select comunidad_id from usuarios where id_usuario = $id_usuario", array($id_usuario));
+        return ($res->num_rows() > 0) ? $res->row()->comunidad_id : FALSE;
+    }
+
+   
 
 }
 

@@ -4,30 +4,45 @@ class Comunidades extends CI_Controller {
 
 	public function index()
 	{
-		$this->load->view('comunidad/index');
+	
+		 if ($this->session->userdata('id_usuario'))
+        {
+            $id_usuario = $this->session->userdata('id_usuario');
+            $data['comunidad_id'] = $this->Comunidad->comunidad_por_id_usuario($id_usuario);
+            $data['comentarios'] = $this->Comentario->ver_comentarios($data['comunidad_id']);
+            
+			$this->load->view('comunidad/index', $data);
+		}
+		else{
+			 $this->load->view('usuarios/login');
+		}
 	}
 
 	public function elegir_comunidad()
 	{
-		$this->load->view('comunidad/elegircomunidad');
+		$data['comunidad'] = $this->Comunidad->mostrar_comunidades();
+		$this->load->view('comunidad/elegircomunidad', $data);
 	}
 
-	public function search()
+	public function unirse_comunidad()
 	{
-		$keyword = $this->input->post('term');
- 
- 		$data['response'] = 'false'; //Set default response
- 
- 		$query = $this->Comunidad->sw_search($keyword); //Model DB search
- 
- if($query->num_rows() > 0){
-    $data['response'] = 'true'; //Set response
-    $data['message'] = array(); //Create array
-    foreach($query->result() as $row){
- 	  $data['message'][] = array('label'=> $row->friendly_name, 'value'=> $row->friendly_name); //Add a row to array
-    }
- }
- echo json_encode($data);
+		 if ($this->input->post('id_comunidad'))
+		 {
+		 	$nick = $this->session->userdata('nick'); 
+		 	$id_comunidad = $this->input->post('id_comunidad');
+		 	$this->Comunidad->insertar_usuario_a_comunidad($id_comunidad, $nick);
+		 	$this->load->view('comunidad/index');
+		 }
+	}
+	public function buscar_comunidad($item)
+	{
+		 if ($this->input->post('item'))
+		 {
+		 	echo 'true';
+		 }
+		 else{
+		 	echo 'false';
+		 }
 	}
  
 
