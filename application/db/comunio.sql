@@ -1,12 +1,13 @@
 drop table comunidad cascade;
 create table comunidad(
   id_comunidad              bigserial      constraint pk_comunidad primary key,
-  nombre_comunidad          varchar(30)    not null constraint                                       uq_comunidad_nombre unique
+  nombre_comunidad          varchar(30)    not null constraint                                       uq_comunidad_nombre unique,
+  password_comunidad   char(32)       
 
 );
 
 insert into comunidad (nombre_comunidad) values ('papafritas');
-insert into comunidad (nombre_comunidad) values ('el bar de la esquina');
+insert into comunidad (nombre_comunidad, password_comunidad) values ('el bar de la esquina', md5('pepe'));
 
 
 drop table usuarios cascade;
@@ -46,6 +47,64 @@ create table comentarios(
                                   on update cascade,
   fecha             timestamp     not null default current_timestamp
 );
+
+
+
+
+drop table if exists posicion cascade;
+
+create table posicion(
+  id_posicion     bigserial     constraint pk_posicion primary key,
+  posicion_campo  varchar(50)   not null
+);
+insert into posicion (posicion_campo) values ('Portero');
+insert into posicion (posicion_campo) values ('Defensa');
+insert into posicion (posicion_campo) values ('Centrocampista');
+insert into posicion (posicion_campo) values ('Delantero');
+
+drop table if exists equipo cascade;
+
+create table equipo(
+  id_equipo       bigserial     constraint pk_equipo primary key,
+  nombre_equipo   varchar(100)  not null
+);
+insert into posicion (nombre_equipo) values ('Barcelona');
+insert into posicion (nombre_equipo) values ('Madrid');
+insert into posicion (nombre_equipo) values ('Bilbao');
+insert into posicion (nombre_equipo) values ('Sevilla');
+insert into posicion (nombre_equipo) values ('Atlético');
+insert into posicion (nombre_equipo) values ('Valencia');
+insert into posicion (nombre_equipo) values ('Celta');
+insert into posicion (nombre_equipo) values ('Eibar');
+insert into posicion (nombre_equipo) values ('Villarreal');
+insert into posicion (nombre_equipo) values ('Málaga');
+insert into posicion (nombre_equipo) values ('Granada');
+insert into posicion (nombre_equipo) values ('Córdoba');
+insert into posicion (nombre_equipo) values ('Real Sociedad');
+insert into posicion (nombre_equipo) values ('Elche');
+insert into posicion (nombre_equipo) values ('Deportivo');
+insert into posicion (nombre_equipo) values ('Getafe');
+insert into posicion (nombre_equipo) values ('Rayo Vallecano');  
+insert into posicion (nombre_equipo) values ('Almeria');  
+insert into posicion (nombre_equipo) values ('Levante');
+insert into posicion (nombre_equipo) values ('Espanyol');
+
+drop table if exists jugador cascade;
+
+create table jugador(
+  id_jugador        bigserial     constraint pk_jugador primary key,
+  nombre_jugador    varchar(100)  not null,
+  url               text          not null,
+  posicion_id       bigint        constraint fk_posicion_id
+                                  references posicion(id_posicion)
+                                  on delete no action
+                                  on update cascade,
+  equipo_id         bigint        constraint fk_equipo_id
+                                  references equipo(id_equipo)
+                                  on delete no action
+                                  on update cascade
+);
+
 
 
 drop table if exists validaciones_pendientes cascade;

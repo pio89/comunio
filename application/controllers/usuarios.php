@@ -7,15 +7,16 @@ class Usuarios extends CI_Controller {
         if ($this->input->post('login')){
             $nick = $this->input->post('nick');
             $password = $this->input->post('password');
-            $comunidad_id = $this->Usuario->comunidad_id_segun_nick_password($nick, $password);
+            $id_comunidad = $this->Usuario->comunidad_id_segun_nick($nick);
             /* comprueba si tiene metido algo en comunidad_id, asi sabe si esta en una comunidad o no(esto es para que salga el menu de elegir comunidad o no)*/
-            if ($this->loguear($nick, $password) == TRUE && $comunidad_id == "")
+            if ($this->loguear($nick, $password) == TRUE && $id_comunidad == "")
             {
                 redirect('comunidades/elegir_comunidad', 'refresh');   
 
             }
-            else if ($this->loguear($nick, $password) == TRUE && $comunidad_id != "")
+            else if ($this->loguear($nick, $password) == TRUE && $id_comunidad != "")
             {
+                $this->session->set_userdata('id_comunidad', $id_comunidad);
                 redirect('comunidades/index', 'refresh'); 
             }
             else{

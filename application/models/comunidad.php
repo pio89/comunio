@@ -15,7 +15,7 @@ class Comunidad extends CI_Model
 
     public function mostrar_comunidades()
     {
-    	$res = $this->db->query("select id_comunidad, nombre_comunidad, count(comunidad_id) as n_judadores from usuarios u, comunidad c where u.comunidad_id = c.id_comunidad group by id_comunidad;");
+    	$res = $this->db->query("select id_comunidad, nombre_comunidad, password_comunidad, count(comunidad_id) as n_judadores from usuarios u, comunidad c where u.comunidad_id = c.id_comunidad group by id_comunidad;");
   
                                       
         return ($res->num_rows() > 0) ? $res->result_array() : FALSE;
@@ -35,6 +35,11 @@ class Comunidad extends CI_Model
         return ($res->num_rows() > 0) ? $res->row()->comunidad_id : FALSE;
     }
 
+    public function comprobar_id_comunidad()
+    {
+        $id_comunidad = $this->session->userdata('id_comunidad');
+        return ($id_comunidad === FALSE) ? FALSE : $id_comunidad;
+    }
    
 
 }

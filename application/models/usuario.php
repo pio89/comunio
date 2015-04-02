@@ -40,11 +40,10 @@ class Usuario extends CI_Model
     }
 
     /* COMPROBAR SI ESTA EN UNA COMUNIDAD O NO */
-    public function comunidad_id_segun_nick_password($nick, $password)
+    public function comunidad_id_segun_nick($nick)
     {
 
-    return $this->id2(array('nick' => $nick,
-                               'password' => md5($password)));
+    return $this->id2(array('nick' => $nick));
    }
 
 
@@ -78,6 +77,20 @@ class Usuario extends CI_Model
 
         return $res->row()->token;
     }
+
+   
+
+    public function id_usuario_logueado()
+    {
+        $id_usuario = $this->session->userdata('id_usuario');
+        return ($id_usuario === FALSE) ? FALSE : $id_usuario;
+    }
+    public function nick_logueado()
+    {
+        $nick = $this->session->userdata('nick');
+        return ($nick === FALSE) ? FALSE : $nick;
+    }
+
 
    
 }

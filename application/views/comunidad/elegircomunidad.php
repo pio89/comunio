@@ -65,14 +65,50 @@
 		table{
 			width:50%;
 			margin-top: 20px;
+			text-align: center;
+		}
+		th, td{
+			text-align: center;
 		}
 		nav + section > h2{
 			margin-top: 10px;
 			margin-bottom: 10px;
 			font-size: 35px;
 		}
+		section{
+			background-color: #85B844;
+		}
+
+		.modal-header
+         {
+             padding:9px 15px;
+             
+             background-color: #68F30F;
+         }
+         .modal-button
+         {
+             padding:9px 15px;
+             
+             background-color: #68F30F;
+         }
+         .btn-success{
+			transform: scale(0.9);
+         }
+         .modal{
+         	position:fixed;
+         	 display: none;
+	        top: 25%;
+	        left: 25%;
+	        width: 50%;
+	        height: 50%;
+	        padding: 16px;
 
 
+	      
+	        color: #333;
+
+	        overflow: auto;
+         }
 		</style>
 
 	
@@ -82,49 +118,24 @@
 		
 	
 		<script type="text/javascript">
-		window.onload = function(){
-		/*$(document).ready(function(){
-			
-		 var url = 'index.php/comunidades/buscar_comunidad/'; 
- 
- 		$('#autocompletado').autocomplete({
-    	source: 'index.php/comunidades/buscar_comunidad?item=autocompletado'
-  		});
-  
-    	
 
-		});
-*/
+		var texto;
+		
+		function mostrarCadena()
+		{
+			texto = document.getElementById('autocompletado').value;
+
+			$.post("index.php/comunidades/buscar_conunidades/", {q:texto}, function(dede){
+				
+
+			  	//document.getElementById('respuesta').innerHTML = dede;
+			  	$("#respuesta").html(dede);
+			 
+			})
 
 
-		$(document).ready(function(){
-    //utilizamos el evento keyup para coger la información
-    //cada vez que se pulsa alguna tecla con el foco en el buscador
-    $(".autocompletar").keyup(function(){
-                    
-        //en info tenemos lo que vamos escribiendo en el buscador
-        var info = $(this).val();
-        //hacemos la petición al método autocompletar del controlador autocompletado
-        //pasando la variable info
-        $.post('autocompletado/autocompletar',{ info : info }, function(data){
-                        
-            //si autocompletado nos devuelve algo
-            if(data != '')
-            {
-    
-                //en el div con clase contenedor mostramos la info
-                $(".contenedor").html(data);
-                                
-            }else{
-                                
-                $(".contenedor").html('');
-                                
-            }
-        })
-                    
-    })	
-
-	}
+		}
+		
 		</script>
 	</head>
 	<body>
@@ -137,9 +148,9 @@
 		<h2>Elige comunidad</h2>
 		<a href=""></a>
 
-		 <p><label for='autocomplete'>Nombre de Usuario: </label><input type='text' id='autocompletado'/></p>
+		 <p><label for='autocomplete'>Nombre de Usuario: </label><input type='text' onkeyup="mostrarCadena()" id='autocompletado'/></p>
 
-
+		<div id="respuesta"></div>
 
 		 <table style="text-align: center; border: solid 2px black;">
 	 	<thead>
@@ -158,12 +169,77 @@
 		 	<td><?= $item['nombre_comunidad'] ?></td>
 			<td><?= $item['n_judadores'] ?></td>
 		 	<td>
-		 		
-		 			<?= form_open('comunidades/unirse_comunidad') ?>
+		 		<?php
+		 		if( $item['password_comunidad'] != '')
+				{?>
+					
+		 			<?= form_open('comunidades/unirse_comunidad_con_password') ?>
 				      <?= form_hidden('id_comunidad', $item['id_comunidad']); ?>
-				      <?= form_submit('unirse', 'Unirse') ?>
-				    <?= form_close() ?>
-		 		
+				      <?= form_hidden('nombre_comunidad', $item['nombre_comunidad']); ?>
+				      <?= form_hidden('password_comunidad', $item['password_comunidad']); ?>
+				      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#<?= $item['id_comunidad'] ?>">
+ 						Unirse		
+						</button>
+						
+						
+						<img src="<?= base_url("/imagenes/iconos/encrypted.png") ?>" />
+						
+						<div class="modal fade" id="<?= $item['id_comunidad'] ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					  <div class="modal-dialog">
+					    <div class="modal-content">
+					      <div class="modal-header">
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					        <h4 class="modal-title" id="myModalLabel">Introduce la contraseña de la comunidad <?= $item['nombre_comunidad'] ?></h4>
+					      </div>
+					      <div class="modal-body">
+					      	 <div class="form-group">
+                                 
+                                  <input type="password" class="form-control" id="password" name="password" value="" required="" placeholder="Contraseña comunidad" title="Please enter your password">
+                                  <span class="help-block"></span>
+					        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					        <button type="button" onclick="this.form.submit()" class="btn btn-primary">Aceptar</button>
+					      </div>
+					    </div>
+					  </div>
+					</div>
+
+					<?= form_close() ?>
+
+				<?php 
+				} else{
+
+				
+  				?> 
+				    
+		 		<?= form_open('comunidades/unirse_comunidad') ?>
+				      <?= form_hidden('id_comunidad', $item['id_comunidad']); ?>
+				      <?= form_hidden('nombre_comunidad', $item['nombre_comunidad']); ?>
+				      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#<?= $item['id_comunidad'] ?>">
+ 						Unirse		
+						</button>
+						
+						
+						
+						<div class="modal fade" id="<?= $item['id_comunidad'] ?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					  <div class="modal-dialog">
+					    <div class="modal-content">
+					      <div class="modal-header">
+					        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					        <h4 class="modal-title" id="myModalLabel">¿Seguro que quiere unirte a la partida <?= $item['nombre_comunidad'] ?></h4>
+					      </div>
+					      <div class="modal-body">
+					        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+					        <button type="button" onclick="this.form.submit()" class="btn btn-primary">Aceptar</button>
+					      </div>
+					    </div>
+					  </div>
+					</div>
+
+					<?= form_close() ?>
+
+				<?php 
+				}
+  				?>
 
 			</td>	
 					
@@ -173,6 +249,18 @@
 
 
  </table>
+
+
+
+<!-- Modal -->
+
+<?php if (isset($error)): ?>
+      <h2>Error: los datos no son correctos</h2>
+    
+    <?php endif ?>
+
+
+
 </section>
 	</body>
 </html>
